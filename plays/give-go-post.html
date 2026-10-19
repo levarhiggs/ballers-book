@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Give Go Post aka “GGP”</title>
+<style>
+:root{--page:#F4F6F8;--surface-1:#FFFFFF;--text-primary:#14202B;--text-secondary:#5B6772;--border:#D8DEE4;--border-strong:#B3BCC5;--bg-accent:#E6F1FB;--border-accent:#185FA5;--text-accent:#0C447C;--radius:8px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page:#0F1419;--surface-1:#1A222B;--text-primary:#E8EDF2;--text-secondary:#9AA7B3;--border:#2A343E;--border-strong:#46535F;--bg-accent:#12304D;--border-accent:#5C9BDB;--text-accent:#B5D4F4;}}
+:root[data-theme="dark"]{--page:#0F1419;--surface-1:#1A222B;--text-primary:#E8EDF2;--text-secondary:#9AA7B3;--border:#2A343E;--border-strong:#46535F;--bg-accent:#12304D;--border-accent:#5C9BDB;--text-accent:#B5D4F4;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*,*::before,*::after{box-sizing:border-box;}
+body{margin:0;background:var(--page);color:var(--text-primary);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.5;-webkit-text-size-adjust:100%;}
+.wrap{max-width:520px;margin:0 auto;padding:16px 16px 32px;}
+h1{font-size:22px;font-weight:500;margin:4px 0 2px;}
+.sub{font-size:14px;color:var(--text-secondary);margin:0 0 14px;}
+.court{background:var(--surface-1);border:1px solid var(--border);border-radius:12px;padding:6px;}
+.court svg{display:block;width:100%;height:auto;}
+#cap{font-size:14px;line-height:1.5;min-height:72px;margin:10px 0;}
+.hd{font-size:14px;font-weight:500;margin:6px 0 6px;}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.btn{font:inherit;font-size:14px;background:var(--surface-1);color:var(--text-primary);border:1px solid var(--border-strong);border-radius:var(--radius);padding:10px 14px;min-height:44px;cursor:pointer;}
+.btn.strong{font-weight:500;padding:10px 18px;}
+.btn:focus-visible{outline:2px solid var(--border-accent);outline-offset:2px;}
+.btn:disabled{cursor:default;}
+.note{font-size:12px;color:var(--text-secondary);margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Give Go Post aka “GGP”</h1>
+<p class="sub">A five-player half-court set. Run the setup, then pick how the attack finishes.</p>
+<div class="court">
+<svg id="ct" viewBox="0 -32 380 402" role="img" aria-label="Half court showing five players running the Give Go Post play with Position, Setup and Attack controls">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g transform="translate(-15.12,-15.12) scale(1.08)" fill="none" stroke="var(--border-strong)" stroke-width="1">
+<rect x="20" y="20" width="340" height="320"/>
+<rect x="135" y="20" width="110" height="129"/>
+<path d="M149 149 A41 41 0 0 0 231 149"/>
+<path d="M40 20 L40 114.5 A161 161 0 0 0 340 114.5 L340 20"/>
+<line x1="172" y1="46" x2="208" y2="46" stroke-width="2"/>
+<path d="M163 46 L163 56 A27 27 0 0 0 217 56 L217 46"/>
+<circle cx="190" cy="56" r="5"/>
+</g>
+<text id="nar" x="190" y="322" text-anchor="middle" dominant-baseline="central" font-size="32" font-weight="500" fill="var(--text-primary)">GGP</text>
+<text id="head" x="190" y="-14" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="500" letter-spacing="0.5" fill="var(--text-primary)"></text>
+<g id="lbl" style="transition:opacity .4s" fill="var(--text-secondary)" font-size="12"></g>
+<g id="ln"></g>
+<g id="p5"><circle r="11" fill="#185FA5"/><text text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#fff">5</text></g>
+<g id="p4"><circle r="11" fill="#993556"/><text text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#fff">4</text></g>
+<g id="p3"><circle r="11" fill="#993C1D"/><text text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#fff">3</text></g>
+<g id="p2"><circle r="11" fill="#0F6E56"/><text text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#fff">2</text></g>
+<g id="p1"><circle r="11" fill="#534AB7"/><text text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#fff">1</text></g>
+<g id="ball"><circle r="5" fill="#EF9F27" stroke="#854F0B" stroke-width="1"/></g>
+</svg>
+</div>
+<div class="hd">STEP 1: SETUP (2 options)</div>
+<div class="row">
+<button class="btn strong" id="bP1">GGP-1</button>
+<button class="btn strong" id="bP3">GGP-3</button>
+</div>
+<div class="hd">STEP 2: ATTACK (3 options)</div>
+<div class="row">
+<button class="btn ob" data-n="1">1st: pass to 5 on block</button>
+<button class="btn ob" data-n="2">2nd: layup</button>
+<button class="btn ob" data-n="3">3rd: outlet to 4 at elbow</button>
+</div>
+<div class="hd">STEP 3: RESET</div>
+<div class="row">
+<button class="btn" id="bReset">Reset</button>
+<button class="btn" id="bSwitch">Switch</button>
+<button class="btn" id="bCycle" aria-pressed="false">Cycle off</button>
+<button class="btn" id="bSnd" aria-pressed="true">Sound on</button>
+</div>
+<div id="cap" aria-live="polite"></div>
+<div class="note">Solid arrow: player movement. Dashed arrow: pass. Ball is the orange dot. The Attack buttons apply to whichever Setup you just ran. With Cycle on, pick one Position, one Setup and one Attack button and the play loops until you turn Cycle off.</div>
+</div>
+<script>
+const NS='http://www.w3.org/2000/svg';
+const layer=document.getElementById('ln');
+const lbl=document.getElementById('lbl');
+const capEl=document.getElementById('cap');
+const nar=document.getElementById('nar');
+const head=document.getElementById('head');
+function setHead(t){head.textContent=t;}
+const bP1=document.getElementById('bP1');
+const bP3=document.getElementById('bP3');
+const bSnd=document.getElementById('bSnd');
+const bReset=document.getElementById('bReset');
+const bSwitch=document.getElementById('bSwitch');
+const bCycle=document.getElementById('bCycle');
+const obs=document.querySelectorAll('.ob');
+const START={1:[296,262],2:[336,116],3:[283,149],4:[97,149],5:[46,52]};
+const SLOT=[250,205],LW=[336,116],X=[283,149],S3=[262,176],E=[231,149],MP=[256,98],STEP1=[232,83],STEP3=[198,128],CTRL=[232,148],ELB=[135,149],BLK=[135,76],TWO_END=[256,200],LAY1=[206,66],LAY3=[200,68],LAY5=[170,64],BALLRIM=[179,47];
+const LBLS=[{x:246,y:230,a:'end',t:'Right slot'},{x:335,y:130,a:'end',t:'Low wing'},{x:291,y:172,a:'middle',t:'Right pocket'},{x:256,y:90,a:'start',t:'Mid post'},{x:90,y:168,a:'middle',t:'Left pocket'},{x:52,y:44,a:'start',t:'Left corner'}];
+const R=13;
+let run=0,pos,bp,snap=null,holder=1,soundOn=true,ac=null,mirror=false;
+let curState='idle',loopRunning=false,loopId=0,clickId=0,cycleOn=false,selPos=null,selSetup=null,selAtk=null;
+function swapLR(s){return s.replace(/\b(right|left|Right|Left)\b/g,m=>({right:'left',left:'right',Right:'Left',Left:'Right'})[m]);}
+function cap(t){capEl.textContent=mirror?swapLR(t):t;}
+function flip(p){return [380-p[0],p[1]];}
+function initAudio(){try{if(!ac){const C=window.AudioContext||window.webkitAudioContext;if(C)ac=new C();}if(ac&&ac.state==='suspended')ac.resume();}catch(e){}}
+function beep(f,d){if(!soundOn||!ac)return;try{const t=ac.currentTime;const o=ac.createOscillator();const g=ac.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.3,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.03);}catch(e){}}
+function chaching(){if(!soundOn||!ac)return;try{const t=ac.currentTime;
+const len=Math.floor(ac.sampleRate*0.07);const buf=ac.createBuffer(1,len,ac.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+const ns=ac.createBufferSource();ns.buffer=buf;const bf=ac.createBiquadFilter();bf.type='bandpass';bf.frequency.value=3500;bf.Q.value=0.8;const ng=ac.createGain();ng.gain.setValueAtTime(0.5,t);ng.gain.exponentialRampToValueAtTime(0.0001,t+0.07);ns.connect(bf);bf.connect(ng);ng.connect(ac.destination);ns.start(t);
+const co=ac.createOscillator();const cg=ac.createGain();co.type='triangle';co.frequency.value=1175;cg.gain.setValueAtTime(0.0001,t);cg.gain.exponentialRampToValueAtTime(0.25,t+0.01);cg.gain.exponentialRampToValueAtTime(0.0001,t+0.09);co.connect(cg);cg.connect(ac.destination);co.start(t);co.stop(t+0.12);
+const t2=t+0.11;const bm=ac.createGain();bm.gain.setValueAtTime(0.0001,t2);bm.gain.exponentialRampToValueAtTime(0.4,t2+0.005);bm.gain.exponentialRampToValueAtTime(0.0001,t2+1.1);bm.connect(ac.destination);
+[[2637,1],[3951,0.55],[5274,0.3],[6645,0.15]].forEach(function(p){const o=ac.createOscillator();const g=ac.createGain();o.type='sine';o.frequency.value=p[0];g.gain.value=p[1];o.connect(g);g.connect(bm);o.start(t2);o.stop(t2+1.2);});
+const ts=t+0.2;[4186,5274,6272,4699,7040,5588,8372,6645].forEach(function(fr,i){const s=ts+i*0.055;const o=ac.createOscillator();const g=ac.createGain();o.type='sine';o.frequency.value=fr;g.gain.setValueAtTime(0.0001,s);g.gain.exponentialRampToValueAtTime(0.14,s+0.004);g.gain.exponentialRampToValueAtTime(0.0001,s+0.28);o.connect(g);g.connect(ac.destination);o.start(s);o.stop(s+0.3);});
+}catch(e){}}
+function triple(){beep(880,0.08);setTimeout(()=>beep(880,0.08),130);setTimeout(()=>beep(880,0.08),260);}
+function setNar(t,it){nar.textContent=t;nar.setAttribute('font-style',it?'italic':'normal');}
+function buildLabels(){lbl.innerHTML='';const am={start:'end',end:'start',middle:'middle'};for(const l of LBLS){const t=document.createElementNS(NS,'text');t.setAttribute('x',mirror?380.16-l.x:l.x);t.setAttribute('y',l.y);t.setAttribute('text-anchor',mirror?am[l.a]:l.a);t.textContent=mirror?swapLR(l.t):l.t;lbl.appendChild(t);}}
+function M(p){const x=mirror?380-p[0]:p[0];return [1.08*x-15.12,1.08*p[1]-15.12];}
+function unit(a,b){const dx=b[0]-a[0],dy=b[1]-a[1],d=Math.hypot(dx,dy)||1;return [dx/d,dy/d];}
+function lineD(a,b,s=R,e=R+3){a=M(a);b=M(b);const u=unit(a,b);return 'M'+(a[0]+u[0]*s)+' '+(a[1]+u[1]*s)+'L'+(b[0]-u[0]*e)+' '+(b[1]-u[1]*e);}
+function curveD(a,c,b,s=R,e=R+3){a=M(a);c=M(c);b=M(b);const u=unit(a,c),v=unit(c,b);return 'M'+(a[0]+u[0]*s)+' '+(a[1]+u[1]*s)+'Q'+c[0]+' '+c[1]+' '+(b[0]-v[0]*e)+' '+(b[1]-v[1]*e);}
+function addPath(d,kind,cls){const p=document.createElementNS(NS,'path');p.setAttribute('d',d);p.setAttribute('fill','none');p.setAttribute('stroke-width','2');p.setAttribute('marker-end','url(#ah)');if(kind==='pass'){p.setAttribute('stroke','#BA7517');p.setAttribute('stroke-dasharray','6 5');}else{p.setAttribute('stroke','var(--text-secondary)');}if(cls)p.setAttribute('class',cls);layer.appendChild(p);return p;}
+function render(){for(const k of [1,2,3,4,5]){const m=M(pos[k]);document.getElementById('p'+k).setAttribute('transform','translate('+m[0]+' '+m[1]+')');}const b=M(bp);document.getElementById('ball').setAttribute('transform','translate('+(b[0]+(mirror?-12:12))+' '+(b[1]+10)+')');}
+function tween(dur,fn,tok,ease){return new Promise(res=>{const t0=performance.now();function f(now){if(tok!==run){res();return;}let t=Math.min(1,(now-t0)/dur);const e=ease==='linear'?t:(t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2);fn(e);render();if(t<1)requestAnimationFrame(f);else res();}requestAnimationFrame(f);});}
+const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+function quad(a,c,b,t){const u=1-t;return [u*u*a[0]+2*u*t*c[0]+t*t*b[0],u*u*a[1]+2*u*t*c[1]+t*t*b[1]];}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function setBtns(state){curState=state;const busy=(state==='busy');const free=loopRunning;[bP1,bP3].forEach(b=>{const d=busy&&!free;b.disabled=d;b.style.opacity=d?.4:1;});obs.forEach(b=>{const d=(state!=='ready')&&!free;b.disabled=d;b.style.opacity=d?.4:1;});}
+function styleBtn(b,on){b.style.background=on?'var(--bg-accent)':'var(--surface-1)';b.style.borderColor=on?'var(--border-accent)':'var(--border-strong)';b.style.color=on?'var(--text-accent)':'var(--text-primary)';}
+function applySel(){styleBtn(bReset,selPos==='reset');styleBtn(bSwitch,selPos==='switch');styleBtn(bP1,selSetup===1);styleBtn(bP3,selSetup===3);obs.forEach(b=>styleBtn(b,selAtk===+b.dataset.n));styleBtn(bCycle,cycleOn);}
+function allSel(){return selPos&&selSetup&&selAtk;}
+const INIT='Starting spots: 1 comes up the right side, 2 is on the right low wing, 3 in the right pocket, 4 in the left pocket, 5 in the left corner. Tap GGP-1 or GGP-3 to run the Setup.';
+function initState(){run++;snap=null;holder=1;setHead('');pos={};for(const k of [1,2,3,4,5])pos[k]=START[k].slice();bp=pos[1].slice();layer.innerHTML='';buildLabels();lbl.style.opacity=1;setNar('GGP',false);cap(INIT);render();setBtns('idle');applySel();}
+function atStart(){return [1,2,3,4,5].every(k=>Math.hypot(pos[k][0]-START[k][0],pos[k][1]-START[k][1])<1)&&Math.hypot(bp[0]-START[1][0],bp[1]-START[1][1])<1;}
+async function toStart(tok,dur){const f={};for(const k of [1,2,3,4,5])f[k]=pos[k].slice();const fb=bp.slice();await tween(dur,e=>{for(const k of [1,2,3,4,5])pos[k]=lerp(f[k],START[k],e);bp=lerp(fb,START[1],e);},tok);}
+async function resetAnim(){const tok=++run;setHead('RESET');snap=null;holder=1;layer.innerHTML='';setNar('GGP',false);lbl.style.opacity=0;setBtns('busy');cap('Resetting players to their starting spots.');await toStart(tok,900);if(tok!==run)return;lbl.style.opacity=1;cap(INIT);setHead('');setBtns('idle');}
+async function switchSide(){const tok=++run;setHead('SWITCH');mirror=!mirror;for(const k of [1,2,3,4,5])pos[k]=flip(pos[k]);bp=flip(bp);snap=null;holder=1;layer.innerHTML='';setNar('GGP',false);buildLabels();lbl.style.opacity=0;render();setBtns('busy');
+cap('Switching sides. The ball heads to 1 while everyone resets, and 1 carries it to the starting spot.');
+const f={};for(const k of [1,2,3,4,5])f[k]=pos[k].slice();const fb=bp.slice();
+await tween(1100,e=>{for(const k of [1,2,3,4,5])pos[k]=lerp(f[k],START[k],e);const p=Math.min(1,e/0.4);bp=lerp(fb,pos[1],p);},tok);if(tok!==run)return;
+lbl.style.opacity=1;cap(INIT);setHead('');setBtns('idle');}
+async function play(v){const tok=++run;snap=null;holder=v;setHead('#1 SETUP – '+(v===1?'GGP-1':'GGP-3'));layer.innerHTML='';setBtns('busy');setNar('GGP',false);lbl.style.opacity=0;
+if(!atStart()){cap('Returning players to their starting spots.');await toStart(tok,800);if(tok!==run)return;}
+for(const k of [1,2,3,4,5])pos[k]=START[k].slice();bp=pos[1].slice();render();
+cap('Setup: 1 dribbles up the right side and into the right slot.');
+addPath(lineD(START[1],SLOT),'move');
+await tween(1100,e=>{pos[1]=lerp(START[1],SLOT,e);bp=pos[1].slice();},tok);if(tok!==run)return;
+await wait(150);if(tok!==run)return;
+setNar('\u201CGive\u201D',true);beep(523,0.14);
+cap('Setup: 1 passes to 2 on the low wing while 3 drops down to screen for 1. 4 slides to the left elbow and 5 to the left block.');
+addPath(lineD(SLOT,LW),'pass');addPath(lineD(X,S3),'move');addPath(lineD(START[4],ELB),'move');addPath(lineD(START[5],BLK),'move');
+const from=bp.slice();
+await Promise.all([tween(750,e=>{bp=lerp(from,LW,e);},tok),tween(750,e=>{pos[3]=lerp(X,S3,e);},tok),tween(750,e=>{pos[4]=lerp(START[4],ELB,e);},tok),tween(750,e=>{pos[5]=lerp(START[5],BLK,e);},tok)]);if(tok!==run)return;
+await wait(200);if(tok!==run)return;
+setNar('\u201CGo\u201D',true);beep(659,0.14);
+if(v===1){cap('Setup: 1 cuts off the screen up along the right mid post, and 2 passes to 1 just as 1 gets into position. 3 lifts to the inside elbow.');}
+else{cap('Setup: 1 cuts off the screen toward the mid post but is covered. 3 lifts to the inside elbow, and 2 passes to 3.');}
+addPath(curveD(SLOT,CTRL,MP),'move');addPath(lineD(S3,E),'move');
+const target=(v===1)?MP:E;const delay=(v===1)?400:450;
+await Promise.all([
+tween(1000,e=>{pos[1]=quad(SLOT,CTRL,MP,e);},tok),
+wait(450).then(()=>tween(600,e=>{pos[3]=lerp(S3,E,e);},tok)),
+wait(delay).then(()=>{if(tok!==run)return;addPath(lineD(LW,target),'pass');const f2=LW.slice();return tween(600,e=>{bp=lerp(f2,target,e);},tok);})
+]);if(tok!==run)return;
+setNar('\u201CPost\u201D',true);beep(784,0.22);
+snap={};for(const k of [1,2,3,4,5])snap[k]=pos[k].slice();
+cap((v===1)?'Setup complete: 1 has the ball on the mid post. Pick an Attack option below.':'Setup complete: 3 has the ball at the inside elbow. Pick an Attack option below.');
+setBtns('ready');}
+async function opt(n){if(!snap)return;const h=holder;const tok=++run;setNar(n===3?'“Reset!”':'“Attack!”',true);setHead('#2 ATTACK – '+({1:'Pass to Block 5',2:'Finish',3:'Outlet to Elbow 4'})[n]);layer.querySelectorAll('.opt').forEach(x=>x.remove());for(const k of [1,2,3,4,5])pos[k]=snap[k].slice();bp=pos[h].slice();render();setBtns('busy');
+const STEP=(h===1)?STEP1:STEP3,LAY=(h===1)?LAY1:LAY3;
+const lead='Attack, option '+n+': 1 and 3 both step into the paint while 2 drops toward the right slot, then ';
+const tails={1:h+' instantly passes to 5 on the block, and 5 finishes at the rim.',2:h+' finishes with a layup.',3:h+' uses 4 at the elbow as an outlet. Attack averted.'};
+cap(lead+tails[n]);
+addPath(lineD(snap[2],TWO_END),'move','opt');
+const s1=snap[1].slice(),s3=snap[3].slice();
+await Promise.all([
+tween(650,e=>{pos[1]=lerp(s1,STEP1,e);if(h===1)bp=pos[1].slice();},tok),
+tween(650,e=>{pos[3]=lerp(s3,STEP3,e);if(h===3)bp=pos[3].slice();},tok),
+tween(800,e=>{pos[2]=lerp(snap[2],TWO_END,e);},tok)
+]);if(tok!==run)return;
+if(n!==2){await wait(250);if(tok!==run)return;}
+if(n===1){addPath(lineD(pos[h],pos[5]),'pass','opt');addPath(lineD(BLK,LAY5),'move','opt');const f=bp.slice(),s5=pos[5].slice();await tween(380,e=>{bp=lerp(f,s5,e);},tok,'linear');if(tok!==run)return;await tween(380,e=>{pos[5]=lerp(s5,LAY5,e);bp=pos[5].slice();},tok,'linear');if(tok===run){const s2=bp.slice();await tween(250,e=>{bp=lerp(s2,BALLRIM,e);},tok,'linear');if(tok===run)chaching();}}
+if(n===2){addPath(lineD(STEP,LAY),'move','opt');const s=STEP.slice();await tween(450,e=>{pos[h]=lerp(s,LAY,e);bp=pos[h].slice();},tok,'linear');if(tok===run){const s2=bp.slice();await tween(250,e=>{bp=lerp(s2,BALLRIM,e);},tok,'linear');if(tok===run)chaching();}}
+if(n===3){addPath(lineD(pos[h],pos[4]),'pass','opt');const f=bp.slice();await tween(600,e=>{bp=lerp(f,pos[4],e);},tok);if(tok===run)triple();}
+if(tok===run)setBtns('ready');}
+function doPos(w){return w==='reset'?resetAnim():switchSide();}
+async function startLoop(stage){if(loopRunning)return;loopRunning=true;const id=++loopId;setBtns(curState);await wait(600);
+while(cycleOn&&id===loopId&&allSel()){
+if(stage===0){await doPos(selPos);if(!(cycleOn&&id===loopId))break;await wait(200);}
+else if(stage===1){await play(selSetup);if(!(cycleOn&&id===loopId))break;await wait(200);}
+else{await opt(selAtk);if(!(cycleOn&&id===loopId))break;await wait(900);}
+stage=(stage+1)%3;}
+loopRunning=false;setBtns(curState);}
+function postAction(next){if(cycleOn&&allSel()&&!loopRunning)startLoop(next);}
+async function onPos(w){initAudio();if(cycleOn){selPos=w;applySel();if(loopRunning)return;const my=++clickId;await doPos(w);if(my===clickId)postAction(1);}else{clickId++;await doPos(w);}}
+async function onSetup(v){initAudio();if(cycleOn){selSetup=v;applySel();if(loopRunning)return;const my=++clickId;await play(v);if(my===clickId)postAction(2);}else{clickId++;await play(v);}}
+async function onAtk(n){initAudio();if(cycleOn){selAtk=n;applySel();if(loopRunning)return;const my=++clickId;await opt(n);if(my===clickId)postAction(0);}else{clickId++;await opt(n);}}
+bReset.addEventListener('click',()=>onPos('reset'));
+bSwitch.addEventListener('click',()=>onPos('switch'));
+bP1.addEventListener('click',()=>onSetup(1));
+bP3.addEventListener('click',()=>onSetup(3));
+obs.forEach(b=>b.addEventListener('click',()=>onAtk(+b.dataset.n)));
+bCycle.addEventListener('click',()=>{cycleOn=!cycleOn;selPos=null;selSetup=null;selAtk=null;bCycle.textContent=cycleOn?'Cycle on':'Cycle off';bCycle.setAttribute('aria-pressed',cycleOn?'true':'false');applySel();});
+bSnd.addEventListener('click',()=>{soundOn=!soundOn;bSnd.textContent=soundOn?'Sound on':'Sound off';bSnd.setAttribute('aria-pressed',soundOn?'true':'false');if(soundOn){initAudio();beep(523,0.1);}});
+initState();
+</script>
+</body>
+</html>

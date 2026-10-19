@@ -1,0 +1,6 @@
+# Local-only: originals contain real player names; specs/exports are working docs
+source-plays/
+exported layouts/
+Basketball Playbook Spec.txt
+tools/out/
+node_modules/
