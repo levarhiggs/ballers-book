@@ -1,0 +1,38 @@
+[
+  {
+    "id": "inbound-stack",
+    "file": "plays/inbound-stack.html",
+    "title": "Inbound Stack",
+    "category": "Inbound",
+    "description": "Baseline inbounds: form the stack, then pick one of three breaks.",
+    "thumb": {
+      "frame": [20, 20, 360, 340],
+      "dots": [[245, 4], [245, 64], [245, 88], [245, 112], [149, 149]],
+      "ball": [245, 4]
+    }
+  },
+  {
+    "id": "give-go-post",
+    "file": "plays/give-go-post.html",
+    "title": "Give Go Post",
+    "category": "Offense",
+    "description": "Half-court set: run GGP-1 or GGP-3, then finish one of three ways.",
+    "thumb": {
+      "frame": [20, 20, 360, 340],
+      "dots": [[296, 262], [336, 116], [283, 149], [97, 149], [46, 52]],
+      "ball": [296, 262]
+    }
+  },
+  {
+    "id": "zone-shift-studio",
+    "file": "plays/zone-shift-studio.html",
+    "title": "Zone Shift Studio",
+    "category": "Defense",
+    "description": "Set and tour zone shifts for the 2‑3, 3‑2, 1‑3‑1 and 2‑1‑2.",
+    "thumb": {
+      "frame": [15, 20, 485, 462],
+      "dots": [[318, 239], [380, 103], [182, 239], [250, 90], [120, 103]],
+      "ball": [250, 355]
+    }
+  }
+]

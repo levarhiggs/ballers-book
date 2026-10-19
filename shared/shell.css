@@ -1,0 +1,48 @@
+/* Baller's Book shell: top bar + app-wide touch rules, shared by the home screen and every play.
+   Plays define their own color tokens; the --bb-* tokens map onto whichever set a page uses
+   (offense plays: --page/--surface-1/--text-primary..., Zone Shift Studio: --bg/--panel/--text...). */
+:root{
+  --bb-bar-bg:var(--surface-1,var(--panel,#fff));
+  --bb-text:var(--text-primary,var(--text,#14202B));
+  --bb-muted:var(--text-secondary,var(--muted,#5B6772));
+  --bb-line:var(--border,#D8DEE4);
+  --bb-btn-border:var(--border-strong,var(--border,#B3BCC5));
+  --bb-btn-bg:var(--surface-1,var(--btn,#fff));
+  --bb-on-bg:var(--bg-accent,var(--btn,#E6F1FB));
+  --bb-on-border:var(--border-accent,var(--blue,#185FA5));
+  --bb-on-text:var(--text-accent,var(--text,#0C447C));
+  --bb-tap:44px;
+}
+@media (min-width:700px){:root{--bb-tap:52px}}
+
+/* stop double-tap zoom on controls without disabling pinch zoom */
+button,a,select,input,label,summary{touch-action:manipulation}
+html{-webkit-tap-highlight-color:transparent}
+
+.bb-bar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:8px;
+  margin-top:calc(-1 * env(safe-area-inset-top,0px));
+  padding:calc(6px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 6px max(12px,env(safe-area-inset-left,0px));
+  background:var(--bb-bar-bg);color:var(--bb-text);
+  border-bottom:1px solid var(--bb-line);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.2;
+}
+.bb-title{flex:1;min-width:0;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.bb-actions{display:flex;gap:6px;flex-shrink:0}
+.bb-btn{
+  font:inherit;font-size:15px;font-weight:500;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  min-height:var(--bb-tap);min-width:var(--bb-tap);padding:0 12px;
+  background:var(--bb-btn-bg);color:var(--bb-text);
+  border:1px solid var(--bb-btn-border);border-radius:10px;
+  text-decoration:none;cursor:pointer;
+}
+.bb-btn svg{width:20px;height:20px;flex-shrink:0}
+.bb-btn[aria-pressed="true"]{background:var(--bb-on-bg);border-color:var(--bb-on-border);color:var(--bb-on-text)}
+.bb-btn:focus-visible{outline:2px solid var(--bb-on-border);outline-offset:2px}
+.bb-btn[hidden]{display:none}
+.bb-back{flex-shrink:0}
+/* icon-only on narrow screens */
+@media (max-width:560px){.bb-btn .bb-lbl{display:none}.bb-btn{padding:0 10px}}
