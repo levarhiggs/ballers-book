@@ -46,3 +46,50 @@ html{-webkit-tap-highlight-color:transparent}
 .bb-back{flex-shrink:0}
 /* icon-only on narrow screens */
 @media (max-width:560px){.bb-btn .bb-lbl{display:none}.bb-btn{padding:0 10px}}
+
+/* ---------- iPad layout pass ----------
+   shell.js sets --bb-bar-h (measured top bar height) and --bb-ar (court viewBox width/height).
+   Selectors key off page structure, not play names, so new plays built the same way get it free.
+   Offense-style plays: .wrap > .court > svg.  Zone Shift Studio: .wrap > .card > svg#court. */
+:root{--bb-court-max-h:calc(100dvh - var(--bb-bar-h,65px) - env(safe-area-inset-bottom,0px))}
+
+@media (min-width:700px){
+  .wrap:has(> .court){max-width:760px}
+  .wrap:has(> .court) #cap{font-size:19px;line-height:1.45;min-height:84px}
+  .wrap:has(> .court) .btn{min-height:56px;font-size:16px;padding:12px 18px}
+  .wrap:has(> .court) .hd{font-size:15px;margin:10px 0 8px}
+  .wrap:has(> .court) .note{font-size:14px}
+  .wrap:has(> .card #court){max-width:900px}
+  .card:has(#court) button,.card:has(#court) select{min-height:48px;font-size:15px;padding:8px 14px}
+  .card:has(#court) .chip{min-height:44px;font-size:14px;padding:6px 12px}
+  .card:has(#court) .bar label{font-size:14px}
+  .card:has(#court) input[type=range]{width:160px;height:32px}
+  .card:has(#court) input[type=checkbox]{width:22px;height:22px}
+  .card:has(#court) .status{font-size:16px;min-height:24px}
+  .card:has(#court) .legend{font-size:13px}
+}
+
+/* landscape tablet: court left (as tall as the screen allows), controls + caption right */
+@media (orientation:landscape) and (min-width:900px) and (min-height:600px){
+  .wrap:has(> .court){
+    max-width:none;display:grid;grid-template-columns:auto minmax(340px,1fr);column-gap:24px;align-items:start;
+    padding:16px max(20px,env(safe-area-inset-right,0px)) 24px max(20px,env(safe-area-inset-left,0px));
+  }
+  .wrap:has(> .court) > *{grid-column:2}
+  .wrap:has(> .court) > .court{
+    grid-column:1;grid-row:1 / span 40;position:sticky;top:calc(var(--bb-bar-h,65px) + 16px);
+    width:min(calc((var(--bb-court-max-h) - 32px - 14px) * var(--bb-ar,0.91) + 14px), calc(100vw - 340px - 64px));
+  }
+  .wrap:has(> .court) > h1{margin-top:0}
+
+  .wrap:has(> .card #court){max-width:none;padding:12px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px))}
+  .wrap:has(> .card #court) > h1,.wrap:has(> .card #court) > .sub{display:inline}
+  .wrap:has(> .card #court) > .sub{margin-left:12px}
+  .card:has(#court){display:grid;grid-template-columns:auto minmax(320px,1fr);column-gap:20px;align-items:start;margin-top:10px}
+  .card:has(#court) > *{grid-column:2;min-width:0}
+  .card:has(#court) > #court{
+    grid-column:1;grid-row:1 / span 20;position:sticky;top:calc(var(--bb-bar-h,65px) + 12px);
+    width:min(calc((var(--bb-court-max-h) - 12px - 48px - 24px - 20px) * var(--bb-ar,1.03)), calc(100vw - 320px - 72px));
+  }
+  .card:has(#court) > .bar:first-child{margin-bottom:6px}
+}

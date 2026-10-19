@@ -38,6 +38,17 @@
   bar.querySelector('.bb-title').textContent = title;
   body.insertBefore(bar, body.firstChild);
 
+  // ---------- layout measurements for shell.css ----------
+  const root = document.documentElement;
+  const court = document.querySelector('.court svg, svg#court');
+  if (court && court.viewBox && court.viewBox.baseVal && court.viewBox.baseVal.height) {
+    const vb = court.viewBox.baseVal;
+    root.style.setProperty('--bb-ar', (vb.width / vb.height).toFixed(4));
+  }
+  const setBarH = () => root.style.setProperty('--bb-bar-h', bar.offsetHeight + 'px');
+  setBarH();
+  if ('ResizeObserver' in window) new ResizeObserver(setBarH).observe(bar);
+
   // ---------- global sound setting, applied through the play's own control ----------
   const soundOn = store.get('sound', true);
   const sndBtn = document.getElementById('bSnd');      // offense plays: toggle button
