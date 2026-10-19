@@ -1,0 +1,27 @@
+#!/bin/sh
+# Local-only guard: block commits containing real player names.
+# Names are read from the gitignored original so they never live in the repo.
+python - <<'PY'
+import re, subprocess, sys
+try:
+    src = open("source-plays/zone-shift-studio.html", encoding="utf-8").read()
+except OSError:
+    print("pre-commit: source-plays/zone-shift-studio.html missing; cannot check names")
+    sys.exit(1)
+block = re.search(r"const PLAYERS=\[(.*?)\];", src, re.S)
+names = re.findall(r"name:'([A-Za-z]+)'", block.group(1)) if block else []
+if len(names) != 5:
+    print(f"pre-commit: expected 5 player names, parsed {len(names)}; refusing to commit")
+    sys.exit(1)
+files = subprocess.run(["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"],
+                       capture_output=True, text=True).stdout.split()
+hits = []
+for f in files:
+    blob = subprocess.run(["git", "show", ":" + f], capture_output=True).stdout.decode("utf-8", "replace")
+    for n in names:
+        if re.search(r"\b" + n + r"\b", blob, re.I):
+            hits.append(f"{f}: {n}")
+if hits:
+    print("pre-commit: player name found in staged files:\n  " + "\n  ".join(hits))
+    sys.exit(1)
+PY
