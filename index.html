@@ -98,6 +98,35 @@ function render(list){
   }
 }
 fetch('plays.json').then(r=>r.json()).then(render).catch(()=>{document.getElementById('plays').innerHTML='<p class="empty">Couldn’t load the play list.</p>';});
+
+// ---------- offline status + updates ----------
+const pill=document.getElementById('status'),upd=document.getElementById('update');
+function status(text,kind){pill.textContent=text;pill.className='pill'+(kind?' '+kind:'');}
+if(!('serviceWorker' in navigator)||!window.isSecureContext){
+  status('Offline not available here','warn');
+}else{
+  let reloading=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!reloading){reloading=true;location.reload();}});
+  const offerUpdate=w=>{status('Update ready','ok');upd.hidden=false;upd.onclick=()=>{upd.disabled=true;upd.textContent='Updating…';w.postMessage('skipWaiting');};};
+  const track=w=>{
+    if(!w) return;
+    const onState=()=>{
+      if(w.state==='installed'){ if(navigator.serviceWorker.controller) offerUpdate(w); }
+      else if(w.state==='activated'){ status('Offline ready','ok'); }
+      else if(w.state==='redundant'){ navigator.serviceWorker.controller?status('Offline ready','ok'):status('Offline setup failed. Reopen on Wi‑Fi','warn'); }
+    };
+    w.addEventListener('statechange',onState);onState();
+  };
+  navigator.serviceWorker.register('sw.js').then(reg=>{
+    if(reg.waiting&&navigator.serviceWorker.controller) offerUpdate(reg.waiting);
+    else if(reg.active) status('Offline ready','ok');
+    else { status('Installing…'); track(reg.installing); }
+    reg.addEventListener('updatefound',()=>{ if(reg.active) status('Downloading update…'); track(reg.installing); });
+    if(navigator.onLine) reg.update().catch(()=>{});
+  }).catch(()=>status('Offline setup failed. Reopen on Wi‑Fi','warn'));
+  // ask the browser not to evict saved data (zone layouts) under storage pressure
+  if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+}
 })();
 </script>
 </body>

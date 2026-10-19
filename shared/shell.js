@@ -107,6 +107,11 @@
     document.addEventListener('webkitfullscreenchange', sync);
   }
 
+  // ---------- service worker (normally registered by the home screen; covers direct opens) ----------
+  if ('serviceWorker' in navigator && window.isSecureContext) {
+    navigator.serviceWorker.register('../sw.js', { scope: '../' }).catch(() => {});
+  }
+
   // ---------- presentation lock (plays that opt in with data-bb-lock) ----------
   const lockBtn = document.getElementById('bbLock');
   if (lockBtn) {
