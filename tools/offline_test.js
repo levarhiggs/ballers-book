@@ -8,7 +8,7 @@ const { chromium } = require('playwright');
 const path = require('path');
 const { execSync } = require('child_process');
 const fs = require('fs');
-const BASE = 'http://localhost:8765/';
+const BASE = process.env.BB_BASE || 'http://localhost:8765/'; // BB_BASE=https://…/ballers-book/ tests the live site
 const ROOT = path.join(__dirname, '..');
 const doUpdate = process.argv.includes('--update');
 

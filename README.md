@@ -112,7 +112,7 @@ Playwright is installed globally, so prefix each node command with `NODE_PATH="$
 |---|---|
 | `python tools/check.py` | every play listed and present, shell tags in place, versions match, no external URLs, payload size |
 | `node tools/baseline.js source-plays orig` then `node tools/baseline.js plays new`, then `python tools/compare.py orig new` | plays behave exactly like the originals: every button, Switch/mirror, Cycle loop, with seeded randomness |
-| `node tools/offline_test.js --update` | installs, goes offline, opens and runs every play, then tests the Update flow |
+| `node tools/offline_test.js --update` | installs, goes offline, opens and runs every play, then tests the Update flow. `BB_BASE=https://levarhiggs.github.io/ballers-book/ node tools/offline_test.js` runs it against the live site |
 | `node tools/zone_test.js` | defaults, lock, names, backup/restore, Reset-all confirmation, touch drag, sound shared across plays, keep-awake setting |
 | `node tools/shots.js label` | screenshots at iPad landscape/portrait and phone sizes, light and dark, in `tools/out/` |
 
