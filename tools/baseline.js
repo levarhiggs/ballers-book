@@ -22,6 +22,7 @@ async function newPage(browser, initScripts = []) {
   const ctx = await browser.newContext({ viewport: { width: vw, height: vh }, hasTouch: true });
   for (const s of [SEED, ...initScripts]) await ctx.addInitScript(s);
   const page = await ctx.newPage();
+  page.on('dialog', d => d.accept()); // wrapped Zone confirms Reset all; originals have no dialogs
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
@@ -118,6 +119,7 @@ async function svgToClient(page, x, y) {
   }, [x, y]);
 }
 async function drag(page, from, to) {
+  await page.evaluate(() => document.getElementById('court').scrollIntoView({ block: 'center' })); // keep both ends on screen
   const a = await svgToClient(page, from[0], from[1]), b = await svgToClient(page, to[0], to[1]);
   await page.mouse.move(a.x, a.y); await page.mouse.down();
   for (let i = 1; i <= 12; i++) await page.mouse.move(a.x + (b.x - a.x) * i / 12, a.y + (b.y - a.y) * i / 12);
@@ -181,6 +183,7 @@ async function runZone(browser, file, preload) {
   await stopTourAt('#tour2', 'Right low block'); await rec('paint tour stopped');
   // spotlight via double tap
   const p1 = await page.evaluate(() => document.querySelectorAll('#pls .pl-g')[1].getAttribute('transform').match(/[-\d.]+/g).map(Number));
+  await page.evaluate(() => document.getElementById('court').scrollIntoView({ block: 'center' }));
   const c1 = await svgToClient(page, p1[0], p1[1]);
   await page.mouse.click(c1.x, c1.y); await page.mouse.click(c1.x, c1.y); await rec('spotlight 1');
   await page.locator('#snd').uncheck(); await rec('sound off');

@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zone Shift Studio</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Baller's Book">
+<meta name="theme-color" content="#f3f5fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1119" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../icons/favicon-32.png">
+<script src="zone-layouts.default.js"></script>
+<style>
+:root{
+  --bg:#f3f5fa; --panel:#ffffff; --court:#eceff7; --line:#8892ab; --text:#1a2033; --muted:#636d86;
+  --cline:#8790a5; --stnline:#c9d0e0; --border:#d3d9e6; --accent:#e8873a; --blue:#3b82f6; --pfill:#dfe5f2; --good:#1f9d63; --btn:#e7ebf4;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --cline:#566078; --stnline:#394360;
+    --bg:#0d1119; --panel:#161b28; --court:#1a2030; --line:#5d6885; --text:#e6eaf3; --muted:#8e98b2;
+    --border:#2a3249; --accent:#f0924a; --blue:#4d8ff7; --pfill:#242c42; --good:#46c487; --btn:#222a40;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --cline:#566078; --stnline:#394360;
+  --bg:#0d1119; --panel:#161b28; --court:#1a2030; --line:#5d6885; --text:#e6eaf3; --muted:#8e98b2;
+  --border:#2a3249; --accent:#f0924a; --blue:#4d8ff7; --pfill:#242c42; --good:#46c487; --btn:#222a40;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;line-height:1.4}
+.wrap{max-width:760px;margin:0 auto;padding:16px 14px 28px}
+h1{font-size:20px;margin:0 0 2px;font-weight:650;letter-spacing:.2px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:10px}
+.bar label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+select,button,textarea{font:inherit;color:var(--text)}
+select{background:var(--btn);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px}
+button{background:var(--btn);border:1px solid var(--border);border-radius:8px;padding:6px 11px;font-size:13px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--blue)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+input[type=range]{width:110px;accent-color:var(--blue)}
+.spacer{flex:1}
+.status{font-size:13px;min-height:20px;margin:0 2px 8px;color:var(--muted)}
+.status b{color:var(--text);font-weight:600}
+.status.ok b{color:var(--good)}
+svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none;border-radius:10px;background:var(--court)}
+.ln{fill:none;stroke:var(--cline);stroke-width:2.2;stroke-linecap:round}
+.dash{stroke-dasharray:7 6}
+.rim{fill:none;stroke:var(--accent);stroke-width:3}
+.stn{fill:transparent;pointer-events:all;stroke:var(--stnline);stroke-width:1.6;stroke-dasharray:3 3;cursor:pointer}
+.stn-g:hover .stn{stroke:var(--blue)}
+.stn-g.edited .stn{stroke:var(--good);stroke-dasharray:none;stroke-opacity:.38}
+.stn-g.edited.inside .stn{stroke:#e5484d}
+.stn-g.active.active.active .stn{stroke:var(--accent);stroke-opacity:1;stroke-dasharray:none;stroke-width:2.4}
+.stn-t{fill:var(--stnline);font-size:8.5px;font-weight:600;text-anchor:middle;pointer-events:none}
+.pl-c{fill:var(--pfill);stroke:#000;stroke-width:3}
+.pl-i{font-size:15px;font-weight:700;text-anchor:middle;dominant-baseline:central;pointer-events:none;fill:var(--text)}
+.pl-n{fill:var(--text);font-size:9px;font-weight:600;letter-spacing:.9px;text-anchor:middle;text-transform:uppercase;pointer-events:none}
+.pl-b{fill:var(--blue)}
+.pl-bt{fill:#fff;font-size:9px;font-weight:700;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.pl-g.canedit{cursor:grab}
+.pl-g.dragging{cursor:grabbing}
+.pl-g{transition:opacity .2s}
+.pl-g.dim{opacity:.28}
+.pl-g.hl .pl-c{fill:#ffd400}
+.pl-g.hl .pl-i{fill:#111}
+.ball-c{fill:var(--accent);stroke:#00000055;stroke-width:1.2}
+.ball-s{fill:none;stroke:#00000055;stroke-width:1.2}
+.ball-l{fill:var(--muted);font-size:9px;font-weight:600;letter-spacing:1.4px;text-anchor:middle;pointer-events:none}
+.ball-g{cursor:grab}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:12px;padding:4px 9px;border-radius:999px}
+.chip.edited{border-color:var(--good)}
+.chip.edited.inside{border-color:#e5484d}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip.active.inside{border-color:var(--accent)}
+.legend{font-size:12px;color:var(--muted);margin:8px 2px 0}
+details{margin-top:12px}
+summary{cursor:pointer;font-size:13px;color:var(--muted)}
+textarea{width:100%;height:110px;margin-top:8px;background:var(--btn);border:1px solid var(--border);border-radius:8px;padding:8px;font-family:ui-monospace,Consolas,monospace;font-size:11px}
+@media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto} }
+/* Baller's Book additions */
+.names{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:8px}
+.names label{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.names input{font:inherit;font-size:15px;color:var(--text);background:var(--btn);border:1px solid var(--border);border-radius:8px;padding:6px 8px;width:100%;min-width:0}
+.names .sw{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:2px solid}
+#court{-webkit-touch-callout:none}
+body.bb-locked #mirror,body.bb-locked #resetSpot,body.bb-locked #resetAll,body.bb-locked .edit-only{display:none}
+</style>
+<link rel="stylesheet" href="../shared/shell.css">
+<script src="../shared/shell.js" defer></script>
+</head>
+<body data-bb-play="zone-shift-studio" data-bb-title="Zone Shift Studio" data-bb-lock>
+<div class="wrap">
+  <h1>Zone Shift Studio</h1>
+  <p class="sub">Drag the ball to a spot on the arc or in the paint, then place your five defenders. Between spots, they blend to match.</p>
+
+  <div class="card">
+    <div class="bar">
+      <label>Defensive strategy
+        <select id="strat">
+          <option value="2-3">2–3 Zone</option>
+          <option value="3-2">3–2 Zone</option>
+          <option value="1-3-1">1–3–1 Zone</option>
+          <option value="2-1-2">2–1–2 Zone</option>
+        </select>
+      </label>
+      <label>Zone tightness <input type="range" id="tight" min="1" max="6" step="0.5" value="3"></label>
+      <span class="spacer"></span>
+      <button id="tour" class="primary">Play arc tour</button>
+      <button id="tour2" class="primary">Play paint tour</button>
+      <label><input type="checkbox" id="snd" checked> Sound</label>
+    </div>
+
+    <div class="status" id="status"></div>
+
+    <svg id="court" viewBox="0 0 500 485" role="application" aria-label="Half court with draggable ball and five defenders">
+      <g id="lines"></g>
+      <g id="stns"></g>
+      <g id="pls"></g>
+      <g id="ballLayer"></g>
+    </svg>
+
+    <div class="chips" id="chips"></div>
+
+    <div class="bar" style="margin:12px 0 0">
+      <button id="mirror">Mirror to opposite side</button>
+      <button id="resetSpot">Reset this spot</button>
+      <button id="resetAll">Reset all spots</button>
+    </div>
+    <p class="legend">Green outline = an edited arc spot, red outline = an edited paint spot. Gray dashed = still using the auto-generated starting layout. Double-click a defender to spotlight them (the others dim but keep moving); double-click again to release.</p>
+
+    <div class="bar edit-only" style="margin:12px 0 0">
+      <button id="backup">Back up layouts</button>
+      <button id="impFile">Restore from file…</button>
+      <input type="file" id="impFileIn" accept=".json,.txt,application/json,text/plain" hidden>
+    </div>
+
+    <details class="edit-only">
+      <summary>Export / import layouts</summary>
+      <textarea id="json" spellcheck="false"></textarea>
+      <div class="bar" style="margin-top:8px">
+        <button id="exp">Show current layouts</button>
+        <button id="imp">Load from text</button>
+      </div>
+    </details>
+
+    <details class="edit-only">
+      <summary>Player names (saved on this iPad only)</summary>
+      <div class="names" id="names"></div>
+      <div class="bar" style="margin-top:8px">
+        <button id="namesSave">Save names</button>
+        <span class="legend" style="margin:0">Names stay on this device and are never part of the app or a backup.</span>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script>
+(function(){
+const NS='http://www.w3.org/2000/svg';
+const COURT={x0:15,x1:485,y0:20,y1:462};
+const BASKET={x:250,y:69};
+const SNAP=26;
+
+// Player names are never in the published app: they live only in this device's storage
+// (Player names panel). Without a name, a defender shows their number and no name label.
+const NAMES_KEY='ballersBook.zoneNames';
+const LOCAL_NAMES=(()=>{try{const n=JSON.parse(localStorage.getItem(NAMES_KEY));return Array.isArray(n)?n:[];}catch(e){return [];}})();
+const PLAYERS=[
+  {num:1,color:'#d9a066'},
+  {num:3,color:'#e07a8a'},
+  {num:2,color:'#5bc4c0'},
+  {num:5,color:'#9a6fd8'},
+  {num:4,color:'#e8908a'}
+].map((p,i)=>{const name=String(LOCAL_NAMES[i]||'').trim().slice(0,14);return Object.assign(p,{name,init:name?name[0].toUpperCase():String(p.num)});});
+// base shapes, in PLAYERS order (#1, #3, #2, #5, #4)
+const BASES={
+  '2-3':  [{x:318,y:239},{x:380,y:103},{x:182,y:239},{x:250,y:90},{x:120,y:103}],
+  '3-2':  [{x:350,y:225},{x:250,y:262},{x:150,y:225},{x:315,y:110},{x:185,y:110}],
+  '1-3-1':[{x:250,y:270},{x:360,y:170},{x:140,y:170},{x:250,y:92},{x:250,y:160}],
+  '2-1-2':[{x:315,y:240},{x:250,y:170},{x:185,y:240},{x:335,y:100},{x:165,y:100}]
+};
+const NAMES={'2-3':'2–3 zone','3-2':'3–2 zone','1-3-1':'1–3–1 zone','2-1-2':'2–1–2 zone'};
+
+// ball stations
+const pol=(deg,R=246)=>{const r=deg*Math.PI/180;return [Math.sin(r)*R,Math.cos(r)*R];};
+const [sdx,sdy]=pol(33), [wdx,wdy]=pol(58);
+const STATIONS=[
+  {id:'LC',name:'Left corner', short:'LC',x:30,y:118,mirror:'RC'},
+  {id:'LW',name:'Left wing',   short:'LW',x:250-wdx,y:BASKET.y+wdy,mirror:'RW'},
+  {id:'LS',name:'Left slot',   short:'LS',x:250-sdx,y:BASKET.y+sdy,mirror:'RS'},
+  {id:'T', name:'Top of the key',short:'TOP',x:250,y:BASKET.y+246,mirror:null},
+  {id:'RS',name:'Right slot',  short:'RS',x:250+sdx,y:BASKET.y+sdy,mirror:'LS'},
+  {id:'RW',name:'Right wing',  short:'RW',x:250+wdx,y:BASKET.y+wdy,mirror:'LW'},
+  {id:'RC',name:'Right corner',short:'RC',x:470,y:118,mirror:'LC'},
+  // paint / penetration spots (inside the arc)
+  {id:'LB',name:'Left low block',short:'LB',x:168,y:100,mirror:'RB',inside:true},
+  {id:'LM',name:'Left mid post',short:'LM',x:168,y:150,mirror:'RM',inside:true},
+  {id:'LE',name:'Left elbow',short:'LE',x:176,y:207,mirror:'RE',inside:true},
+  {id:'N', name:'Nail',short:'NAIL',x:250,y:207,mirror:null,inside:true},
+  {id:'RE',name:'Right elbow',short:'RE',x:324,y:207,mirror:'LE',inside:true},
+  {id:'RM',name:'Right mid post',short:'RM',x:332,y:150,mirror:'LM',inside:true},
+  {id:'RB',name:'Right low block',short:'RB',x:332,y:100,mirror:'LB',inside:true},
+  {id:'H', name:'Start (below the top)',short:'START',x:250,y:355,mirror:null}
+];
+const ARC_IDS=['LC','LW','LS','T','RS','RW','RC'];
+const PAINT_IDS=['LB','LM','LE','N','RE','RM','RB'];
+const ST=Object.fromEntries(STATIONS.map(s=>[s.id,s]));
+
+// ---------- state ----------
+let strat='2-3', tight=3;
+let L={}, E={};          // L[strat][id] = [{x,y}*5]; E[strat][id] = true when edited
+let ball={x:ST.H.x,y:ST.H.y};
+let snapId='H';
+let P=[];                // displayed player positions
+let drag=null, anim=null, flash='';
+let lastTap={i:-1,t:0};
+const hl=new Set();
+
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function makeDefault(sid){
+  const s=ST[sid], base=BASES[strat];
+  if(sid==='H') return base.map(p=>({x:p.x,y:p.y}));
+  return base.map(p=>{
+    const dist=Math.hypot(s.x-p.x,s.y-p.y);
+    const f=0.3+0.7*Math.exp(-dist*dist/(2*170*170));
+    const pull=s.inside?0.5:0.2;
+    return {
+      x:clamp(p.x+(s.x-250)*0.32+(s.x-p.x)*f*pull,35,465),
+      y:clamp(p.y+(s.y-p.y)*f*pull,40,400)
+    };
+  });
+}
+function layout(sid){
+  L[strat]=L[strat]||{};
+  if(!L[strat][sid]) L[strat][sid]=makeDefault(sid);
+  return L[strat][sid];
+}
+function isEdited(sid){return !!(E[strat]&&E[strat][sid]);}
+function markEdited(sid){E[strat]=E[strat]||{};E[strat][sid]=true;}
+
+function target(b){
+  let exact=null, ws=[], sum=0;
+  for(const s of STATIONS){
+    const d=Math.hypot(b.x-s.x,b.y-s.y);
+    if(d<0.75){exact=s;break;}
+    const w=1/Math.pow(d,tight); ws.push([s,w]); sum+=w;
+  }
+  if(exact) return layout(exact.id).map(p=>({x:p.x,y:p.y}));
+  const out=PLAYERS.map(()=>({x:0,y:0}));
+  for(const [s,w] of ws){
+    const lay=layout(s.id), k=w/sum;
+    for(let i=0;i<5;i++){out[i].x+=lay[i].x*k;out[i].y+=lay[i].y*k;}
+  }
+  return out;
+}
+function stationAt(b,r){
+  let best=null,bd=r;
+  for(const s of STATIONS){const d=Math.hypot(b.x-s.x,b.y-s.y);if(d<=bd){bd=d;best=s;}}
+  return best?best.id:null;
+}
+function mirrorIdx(){
+  const base=BASES[strat];
+  return base.map(p=>{
+    let bj=0,bd=1e9;
+    base.forEach((q,j)=>{const d=Math.hypot(500-p.x-q.x,p.y-q.y);if(d<bd){bd=d;bj=j;}});
+    return bj;
+  });
+}
+
+// ---------- persistence ----------
+const KEY='zoneShiftStudio.v1';
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify({strat,tight,L,E}));}catch(e){}
+}
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY); if(!raw) return;
+    const d=JSON.parse(raw);
+    if(d.L) L=d.L; if(d.E) E=d.E;
+    if(d.strat&&BASES[d.strat]) strat=d.strat;
+    if(typeof d.tight==='number') tight=d.tight;
+  }catch(e){}
+}
+
+// ---------- drawing ----------
+const $=id=>document.getElementById(id);
+const svg=$('court');
+function el(tag,attrs,parent){
+  const e=document.createElementNS(NS,tag);
+  for(const k in attrs) e.setAttribute(k,attrs[k]);
+  if(parent) parent.appendChild(e);
+  return e;
+}
+function drawCourt(){
+  const g=$('lines');
+  el('rect',{x:15,y:20,width:470,height:442,class:'ln',rx:2},g);
+  el('rect',{x:175,y:20,width:150,height:179,class:'ln'},g);
+  el('path',{d:'M194 199 A56 56 0 0 0 306 199',class:'ln'},g);
+  el('path',{d:'M194 199 A56 56 0 0 1 306 199',class:'ln dash'},g);
+  el('path',{d:'M43 20 L43 152 A223 223 0 0 0 457 152 L457 20',class:'ln'},g);
+  el('path',{d:'M212 69 A38 38 0 0 0 288 69 M212 58 L212 69',class:'ln'},g);
+  el('path',{d:'M194 462 A56 56 0 0 1 306 462',class:'ln'},g);
+  el('line',{x1:222,y1:58,x2:278,y2:58,class:'ln'},g);
+  el('circle',{cx:250,cy:69,r:7,class:'rim'},g);
+}
+const stnEls={};
+function drawStations(){
+  const g=$('stns');
+  for(const s of STATIONS){
+    const gg=el('g',{class:'stn-g'+(s.inside?' inside':'')},g);
+    el('circle',{cx:s.x,cy:s.y,r:21,fill:'transparent',style:'cursor:pointer'},gg);
+    el('circle',{cx:s.x,cy:s.y,r:s.id==='H'?15:13,class:'stn'},gg);
+    const t=el('text',{x:s.x,y:s.y+3,class:'stn-t'},gg); t.textContent=s.short;
+    gg.addEventListener('click',()=>{ if(drag) return; goTo([s]); });
+    stnEls[s.id]=gg;
+  }
+}
+const plEls=[];
+function drawPlayers(){
+  const g=$('pls');
+  PLAYERS.forEach((p,i)=>{
+    const gg=el('g',{class:'pl-g'},g);
+    const c=el('circle',{r:19,class:'pl-c',stroke:p.color},gg);
+    const t=el('text',{class:'pl-i'},gg); t.textContent=p.init;
+    if(p.name){
+      el('circle',{cx:14,cy:-14,r:8,class:'pl-b'},gg);
+      const bt=el('text',{x:14,y:-14,class:'pl-bt'},gg); bt.textContent=p.num;
+    }
+    const n=el('text',{y:34,class:'pl-n'},gg); n.textContent=p.name;
+    gg.addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      const now=performance.now();
+      if(lastTap.i===i&&now-lastTap.t<350){ lastTap={i:-1,t:0}; toggleHL(i); drag=null; return; }
+      lastTap={i,t:now};
+      if(document.body.classList.contains('bb-locked')){ drag=null; return; }
+      if(!snapId||anim){ drag={type:'locked',x:e.clientX,y:e.clientY,warned:false}; return; }
+      drag={type:'player',i,sid:snapId};
+      gg.classList.add('dragging');
+    });
+    plEls.push(gg);
+  });
+}
+let ballG;
+function drawBall(){
+  const g=$('ballLayer');
+  ballG=el('g',{class:'ball-g'},g);
+  el('circle',{r:11,class:'ball-c'},ballG);
+  el('path',{d:'M-11 0 H11 M0 -11 V11 M-7.8 -7.8 Q0 0 -7.8 7.8 M7.8 -7.8 Q0 0 7.8 7.8',class:'ball-s'},ballG);
+  const t=el('text',{y:27,class:'ball-l'},ballG); t.textContent='BALL';
+  el('circle',{r:22,fill:'transparent'},ballG); // bigger grab target
+  ballG.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    anim=null; setTourBtn();
+    const p=toSvg(e);
+    drag={type:'ball',ox:ball.x-p.x,oy:ball.y-p.y};
+  });
+}
+function toSvg(e){
+  const pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
+  const m=svg.getScreenCTM().inverse(); const r=pt.matrixTransform(m);
+  return {x:r.x,y:r.y};
+}
+
+window.addEventListener('pointermove',e=>{
+  if(!drag) return;
+  if(drag.type==='locked'){
+    if(!drag.warned&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>6){
+      drag.warned=true;
+      flashMsg('Drop the ball on a spot first — then you can move defenders for that spot.');
+    }
+    return;
+  }
+  const p=toSvg(e);
+  if(drag.type==='ball'){
+    const b={x:clamp(p.x+drag.ox,COURT.x0+8,COURT.x1-8),y:clamp(p.y+drag.oy,COURT.y0+8,COURT.y1-8)};
+    const sid=stationAt(b,SNAP);
+    if(sid){
+      if(sid!==snapId) beep();
+      ball.x=ST[sid].x;ball.y=ST[sid].y;snapId=sid;
+    }
+    else{ball.x=b.x;ball.y=b.y;snapId=null;}
+    refreshUI();
+  }else if(drag.type==='player'){
+    const q={x:clamp(p.x,COURT.x0+16,COURT.x1-16),y:clamp(p.y,COURT.y0+10,COURT.y1-22)};
+    layout(drag.sid)[drag.i]={x:q.x,y:q.y};
+    P[drag.i]={x:q.x,y:q.y};
+    markEdited(drag.sid);
+  }
+});
+function endDrag(){
+  if(!drag) return;
+  if(drag.type==='player'){plEls[drag.i].classList.remove('dragging');save();}
+  else save();
+  drag=null; refreshUI();
+}
+window.addEventListener('pointerup',endDrag);
+window.addEventListener('pointercancel',endDrag);
+
+// ---------- ball animation ----------
+function segDur(a,b,tour){return Math.max(450,Math.hypot(a.x-b.x,a.y-b.y)*5)*(tour?1.5:1);}
+function goTo(pts,tour){
+  if(!pts.length) return;
+  if(!tour&&!anim&&pts.length===1&&snapId&&Math.hypot(ball.x-pts[0].x,ball.y-pts[0].y)<1) return;
+  anim={pts:pts.map(p=>({x:p.x,y:p.y})),i:0,from:{x:ball.x,y:ball.y},segStart:performance.now(),hold:false,tour:tour||false};
+  anim.dur=segDur(anim.from,anim.pts[0],tour);
+  snapId=null; setTourBtn(); refreshUI();
+}
+function stepAnim(now){
+  const a=anim; if(!a) return;
+  if(a.hold){
+    if(now-a.holdStart>=500){
+      a.hold=false;a.i++;a.from={x:ball.x,y:ball.y};a.segStart=now;a.dur=segDur(a.from,a.pts[a.i],a.tour);
+      snapId=null; refreshUI();
+    }
+    return;
+  }
+  const k=clamp((now-a.segStart)/a.dur,0,1);
+  const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+  const to=a.pts[a.i];
+  ball.x=a.from.x+(to.x-a.from.x)*e; ball.y=a.from.y+(to.y-a.from.y)*e;
+  if(k>=1){
+    ball.x=to.x;ball.y=to.y;
+    snapId=stationAt(ball,1);
+    if(snapId) beep();
+    if(a.i>=a.pts.length-1){anim=null;setTourBtn();}
+    else if(a.tour){a.hold=true;a.holdStart=now;}
+    else {a.i++;a.from={x:ball.x,y:ball.y};a.segStart=now;a.dur=segDur(a.from,a.pts[a.i]);}
+    refreshUI();
+  }
+}
+const TOURS={
+  arc:['T','RS','RW','RC','RW','RS','T','LS','LW','LC','LW','LS','T','H'],
+  paint:['T','N','RE','RM','RB','RM','RE','N','LE','LM','LB','LM','LE','N','T','H']
+};
+function setTourBtn(){
+  $('tour').textContent=(anim&&anim.tour==='arc')?'Stop arc tour':'Play arc tour';
+  $('tour2').textContent=(anim&&anim.tour==='paint')?'Stop paint tour':'Play paint tour';
+}
+
+// ---------- UI ----------
+function flashMsg(m){flash=m;refreshUI();clearTimeout(flashMsg.t);flashMsg.t=setTimeout(()=>{flash='';refreshUI();},3200);}
+function buildChips(){
+  const c=$('chips'); c.innerHTML='';
+  c.style.flexDirection='column'; c.style.gap='8px';
+  [['Arc',ARC_IDS],['Paint',PAINT_IDS],['Start',['H']]].forEach(([label,ids])=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;flex-wrap:wrap;gap:6px;align-items:center';
+    const lb=document.createElement('span');
+    lb.textContent=label; lb.style.cssText='font-size:12px;color:var(--muted);width:42px';
+    row.appendChild(lb);
+    ids.forEach(id=>{
+      const s=ST[id];
+      const b=document.createElement('button');
+      b.className='chip'+(s.inside?' inside':''); b.dataset.id=s.id; b.textContent=s.name;
+      b.addEventListener('click',()=>goTo([s]));
+      row.appendChild(b);
+    });
+    c.appendChild(row);
+  });
+}
+function refreshUI(){
+  for(const s of STATIONS){
+    const g=stnEls[s.id];
+    g.classList.toggle('edited',isEdited(s.id));
+    g.classList.toggle('active',snapId===s.id);
+  }
+  document.querySelectorAll('.chip').forEach(b=>{
+    b.classList.toggle('edited',isEdited(b.dataset.id));
+    b.classList.toggle('active',snapId===b.dataset.id);
+  });
+  plEls.forEach(g=>g.classList.toggle('canedit',!!snapId&&!anim));
+  const st=$('status');
+  if(flash){st.className='status';st.textContent=flash;}
+  else if(snapId){
+    st.className='status ok';
+    st.innerHTML='Ball at <b>'+ST[snapId].name+'</b> ('+NAMES[strat]+').'+(document.body.classList.contains('bb-locked')?'':' Drag any defender to set where they stand for this spot.');
+  }else{
+    st.className='status';
+    st.textContent=anim&&anim.tour?'Touring — watch the zone slide with the ball.':'Between spots — defenders are blending the saved layouts. Release near a spot to lock in and edit.';
+  }
+  const m=snapId&&ST[snapId].mirror;
+  $('mirror').disabled=!m;
+  $('resetSpot').disabled=!snapId;
+}
+
+$('strat').addEventListener('change',e=>{strat=e.target.value;save();refreshUI();});
+$('tight').addEventListener('input',e=>{tight=parseFloat(e.target.value);save();});
+let actx=null;
+function getCtx(){
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended') actx.resume();
+  }catch(e){}
+  return actx;
+}
+function beep(){
+  const sw=$('snd'); if(sw&&!sw.checked) return;
+  try{
+    const c=getCtx(); if(!c) return;
+    const t=c.currentTime, o=c.createOscillator(), g=c.createGain();
+    o.type='sine'; o.frequency.value=720;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.06,t+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
+    o.connect(g); g.connect(c.destination);
+    o.start(t); o.stop(t+0.18);
+  }catch(e){}
+}
+function applyHL(){
+  plEls.forEach((g,j)=>{
+    g.classList.toggle('hl',hl.has(j));
+    g.classList.toggle('dim',hl.size>0&&!hl.has(j));
+  });
+}
+function toggleHL(i){
+  if(hl.has(i)) hl.delete(i); else hl.add(i);
+  applyHL();
+}
+function runTour(name){
+  getCtx();
+  if(anim&&anim.tour){anim=null;setTourBtn();refreshUI();return;}
+  goTo(TOURS[name].map(id=>ST[id]),name);
+}
+$('tour').addEventListener('click',()=>runTour('arc'));
+$('tour2').addEventListener('click',()=>runTour('paint'));
+$('mirror').addEventListener('click',()=>{
+  const m=snapId&&ST[snapId].mirror; if(!m) return;
+  const src=layout(snapId), idx=mirrorIdx(), out=[];
+  for(let i=0;i<5;i++) out[idx[i]]={x:500-src[i].x,y:src[i].y};
+  L[strat][m]=out; markEdited(m); save();
+  flashMsg('Mirrored '+ST[snapId].name.toLowerCase()+' → '+ST[m].name.toLowerCase()+'. Tap the spot to check it.');
+});
+$('resetSpot').addEventListener('click',()=>{
+  if(!snapId) return;
+  if(L[strat]) delete L[strat][snapId];
+  if(E[strat]) delete E[strat][snapId];
+  save(); refreshUI();
+});
+$('resetAll').addEventListener('click',()=>{
+  if(!confirm('Reset all '+NAMES[strat]+' spots to the starting layout? Your edits for this zone will be lost. (Back up layouts first if unsure.)')) return;
+  L[strat]={}; E[strat]={}; save(); refreshUI();
+  flashMsg('All '+NAMES[strat]+' spots reset to the starting layout.');
+});
+$('exp').addEventListener('click',()=>{
+  const out={}; out.strategy=strat; out.layouts=L; out.edited=E;
+  $('json').value=JSON.stringify(out);
+});
+$('imp').addEventListener('click',()=>{
+  try{
+    const d=JSON.parse($('json').value);
+    if(d.layouts) L=d.layouts; if(d.edited) E=d.edited;
+    if(d.strategy&&BASES[d.strategy]){strat=d.strategy;$('strat').value=strat;}
+    save(); refreshUI(); flashMsg('Layouts loaded.');
+  }catch(err){flashMsg('Couldn’t read that text. Paste the full export and try again.');}
+});
+
+// ---------- Baller's Book: backup, restore from file, local names ----------
+$('backup').addEventListener('click',async()=>{
+  $('exp').click();
+  const text=$('json').value, d=new Date();
+  const fname='zone-layouts-'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.json';
+  let copied=false;
+  try{await navigator.clipboard.writeText(text);copied=true;}catch(e){}
+  const file=new File([text],fname,{type:'application/json'});
+  try{
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:'Zone layouts backup'});
+      flashMsg((copied?'Copied to the clipboard and ':'')+'shared '+fname+'.');
+      return;
+    }
+  }catch(e){ if(e&&e.name==='AbortError'){flashMsg(copied?'Backup copied to the clipboard.':'Backup cancelled.');return;} }
+  try{
+    const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=fname;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    flashMsg((copied?'Copied to the clipboard and saved ':'Saved ')+fname+'.');
+  }catch(e){flashMsg(copied?'Backup copied to the clipboard.':'Couldn’t back up here. Use Export / import, then Show current layouts.');}
+});
+$('impFile').addEventListener('click',()=>$('impFileIn').click());
+$('impFileIn').addEventListener('change',async e=>{
+  const f=e.target.files&&e.target.files[0]; e.target.value=''; if(!f) return;
+  if(!confirm('Replace all saved layouts with the ones in '+f.name+'?')) return;
+  try{$('json').value=await f.text();$('imp').click();}catch(err){flashMsg('Couldn’t read that file.');}
+});
+(function namesPanel(){
+  const box=$('names');
+  PLAYERS.forEach((p,i)=>{
+    const lb=document.createElement('label');
+    const sw=document.createElement('span');sw.className='sw';sw.style.borderColor=p.color;
+    const inp=document.createElement('input');inp.type='text';inp.maxLength=14;inp.autocomplete='off';inp.spellcheck=false;
+    inp.placeholder='#'+p.num;inp.value=p.name;inp.setAttribute('aria-label','Name for defender number '+p.num);
+    lb.append(sw,'#'+p.num,inp);box.appendChild(lb);
+  });
+  $('namesSave').addEventListener('click',()=>{
+    const names=[...box.querySelectorAll('input')].map(x=>x.value.trim());
+    try{
+      if(names.some(Boolean)) localStorage.setItem(NAMES_KEY,JSON.stringify(names)); else localStorage.removeItem(NAMES_KEY);
+    }catch(e){}
+    location.reload();
+  });
+})();
+
+// ---------- main loop ----------
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  stepAnim(now);
+  const tg=target(ball), k=1-Math.exp(-dt*11);
+  for(let i=0;i<5;i++){
+    if(drag&&drag.type==='player'&&drag.i===i) continue;
+    P[i].x+=(tg[i].x-P[i].x)*k; P[i].y+=(tg[i].y-P[i].y)*k;
+    if(Math.abs(tg[i].x-P[i].x)<0.05) P[i].x=tg[i].x;
+    if(Math.abs(tg[i].y-P[i].y)<0.05) P[i].y=tg[i].y;
+  }
+  plEls.forEach((g,i)=>g.setAttribute('transform','translate('+P[i].x.toFixed(2)+' '+P[i].y.toFixed(2)+')'));
+  ballG.setAttribute('transform','translate('+ball.x.toFixed(2)+' '+ball.y.toFixed(2)+')');
+  requestAnimationFrame(frame);
+}
+
+load();
+$('strat').value=strat; $('tight').value=tight;
+drawCourt(); drawStations(); drawPlayers(); drawBall(); buildChips();
+P=layout('H').map(p=>({x:p.x,y:p.y}));
+refreshUI();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -3,11 +3,29 @@
 Exits 1 on any difference. Prints the first few differing steps per play.
 """
 import json
+import re
 import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 OUT = Path(__file__).parent / "out"
+
+
+NUM = re.compile(r"-?\d+\.\d+")
+
+
+def norm(v):
+    """Ignore what can't be a behavior change: class-name order, and sub-0.01 float noise from
+    pixel->court conversions when a court is drawn at a different on-screen size."""
+    if isinstance(v, dict):
+        return {k: norm(x) for k, x in v.items()}
+    if isinstance(v, list):
+        return [norm(x) for x in v]
+    if isinstance(v, str):
+        if re.fullmatch(r"[\w -]+", v) and any(c in v for c in ("stn-g", "chip", "pl-g")):
+            return " ".join(sorted(v.split()))
+        return NUM.sub(lambda m: f"{float(m.group()):.2f}", v)
+    return v
 
 
 def main():
@@ -30,7 +48,7 @@ def main():
             for k in sorted(set(sa) | set(sb)):
                 if k in ignore:
                     continue
-                if sa.get(k) != sb.get(k):
+                if norm(sa.get(k)) != norm(sb.get(k)):
                     diffs.append(f"[{sa.get('step')}] {k}: {str(sa.get(k))[:140]!r} != {str(sb.get(k))[:140]!r}")
         errs = rb["errors"]
         status = "IDENTICAL" if not diffs else f"{len(diffs)} DIFFS"
